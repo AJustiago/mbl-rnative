@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import PolarCoordinate from './components/PolarCoordinate';
 
 export default function App() {
   return (
     <View style={styles.container}>
+      {/* Render the PolarCoordinate component */}
       <PolarCoordinate speed={500} />
     </View>
   );
@@ -12,7 +14,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
