@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, Dimensions } from 'react-native';
-import { Svg, Path } from 'react-native-svg';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, View } from 'react-native';
+import { Path, Svg } from 'react-native-svg';
 
 const PolarCoordinate = ({ speed }) => {
   const initialRadiusMultiplier = 30;
@@ -15,7 +15,7 @@ const PolarCoordinate = ({ speed }) => {
   useEffect(() => {
     const generatePoints = () => {
       const newPoints = [];
-      for (let theta = 0; theta < 1000; theta += 0.01) {
+      for (let theta = 0; theta > -1000; theta -= 0.01) {
         const radius = radiusMultiplier * theta;
         const x = screenWidth / 2 + radius * Math.cos(theta);
         const y = screenHeight / 2 + radius * Math.sin(theta);
@@ -30,18 +30,12 @@ const PolarCoordinate = ({ speed }) => {
   }, [speed, radiusMultiplier, screenWidth, screenHeight]);
 
   useEffect(() => {
-    const zoomOutIntervalId = setInterval(() => {
-      // Gradually increase the radius multiplier for zoom-out effect
-      setRadiusMultiplier((prevMultiplier) => prevMultiplier - 0.1);
-    }, 1000); // Increase radius multiplier every 1 second for a slow zoom out effect
-
     const colorIntervalId = setInterval(() => {
       // Change color every 3 seconds
       setColorIndex((prevIndex) => (prevIndex + 1) % rainbowColors.length);
     }, 3000);
 
     return () => {
-      clearInterval(zoomOutIntervalId);
       clearInterval(colorIntervalId);
     };
   }, []);
