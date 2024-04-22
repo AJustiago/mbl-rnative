@@ -39,7 +39,7 @@ import { Circle, Path, Svg } from 'react-native-svg';
         <View style={{ flex: 1 }}>
         <Svg height={screenHeight} width={screenWidth}>
             <Circle cx={parseFloat(startingPoint[0])} cy={parseFloat(startingPoint[1])} r={10} fill="white" />
-            <Path d={pathData} fill="none" />
+            <Path d={pathData} fill="none" stroke="#fff" strokeWidth={3} />
         </Svg>
         </View>
     );
