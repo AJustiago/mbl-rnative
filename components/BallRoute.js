@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions } from 'react-native';
 import { Circle, Path, Svg } from 'react-native-svg';
 
-const BallRoute = ({ speed }) => {
+const BallRoute = ({ gravity }) => {
     const initialRadiusMultiplier = 30;
     const screenWidth = Dimensions.get('window').width;
     const screenHeight = Dimensions.get('window').height;
     const start = -4.5;
     const [points, setPoints] = useState([]);
     const [radiusMultiplier, setRadiusMultiplier] = useState(initialRadiusMultiplier);
-    const [ballPosition, setBallPosition] = useState({ x: screenWidth / 2, y: screenHeight / 2 }); 
+    const [ballPosition, setBallPosition] = useState({ x: screenWidth / 2, y: screenHeight / 2 });
     const [isMoving, setIsMoving] = useState(false);
-    const [isReady, setIsReady] = useState(false); 
+    const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
         const generatePoints = () => {
@@ -29,30 +29,40 @@ const BallRoute = ({ speed }) => {
             }
         };
 
-        const intervalId = setInterval(generatePoints, speed);
+        const intervalId = setInterval(generatePoints, 16); // Update every 16ms (approximately 60 FPS)
 
         return () => clearInterval(intervalId);
-    }, [speed, radiusMultiplier, screenWidth, screenHeight, isReady]);
+    }, [radiusMultiplier, screenWidth, screenHeight, isReady]);
 
-    const moveBall = () => {
-        setIsMoving(true);
-        let index = 0;
-        const moveAnimation = () => {
-            if (index < points.length) {
-                setBallPosition(points[index]);
-                index++;
-                requestAnimationFrame(moveAnimation);
-            } else {
-                setIsMoving(false);
-            }
-        };
-        requestAnimationFrame(moveAnimation);
+    const applyGravity = () => {
+        const gravityVector = { x: screenWidth / 2 - ballPosition.x, y: screenHeight / 2 - ballPosition.y };
+        const gravityMagnitude = Math.sqrt(gravityVector.x ** 2 + gravityVector.y ** 2);
+        const normalizedGravity = { x: gravityVector.x / gravityMagnitude, y: gravityVector.y / gravityMagnitude };
+        const gravityForce = { x: gravity * normalizedGravity.x, y: gravity * normalizedGravity.y };
+        setBallPosition(prevPosition => ({
+            x: prevPosition.x + gravityForce.x,
+            y: prevPosition.y + gravityForce.y
+        }));
     };
+
+    const handleClick = () => {
+        if (!isMoving) {
+            setIsMoving(true);
+            const flapForce = -10; // Adjust the force of the flap
+            setBallPosition(prevPosition => ({ ...prevPosition, y: prevPosition.y + flapForce }));
+            setTimeout(() => setIsMoving(false), 100); // Reset moving state after a short delay
+        }
+    };
+
+    useEffect(() => {
+        const gravityInterval = setInterval(applyGravity, 16); // Apply gravity every 16ms (approximately 60 FPS)
+        return () => clearInterval(gravityInterval);
+    }, [gravity]);
 
     const pathData = `M${points.map(point => `${point.x},${point.y}`).join('L')}`;
 
     return (
-        <div style={{ width: screenWidth, height: screenHeight }}>
+        <div style={{ width: screenWidth, height: screenHeight }} onClick={handleClick}>
             <Svg height={screenHeight} width={screenWidth}>
                 {isReady && (
                     <Circle
@@ -60,11 +70,10 @@ const BallRoute = ({ speed }) => {
                         cy={ballPosition.y}
                         r={10}
                         fill="white"
-                        onClick={moveBall}
                         style={{ cursor: 'pointer' }}
                     />
                 )}
-                <Path d={pathData} fill="none" stroke="" strokeWidth={3} />
+                <Path d={pathData} fill="none" stroke="#ffff" strokeWidth={3} />
             </Svg>
         </div>
     );
