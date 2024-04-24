@@ -7,7 +7,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.ballContainer}>
-        <BallRoute speed={500} />
+        <BallRoute speed={100} />
       </View>
       <View style={styles.polarContainer}>
         <PolarCoordinate speed={500} />
