@@ -7,12 +7,18 @@ const BallRoute = () => {
     const screenWidth = Dimensions.get('window').width;
     const screenHeight = Dimensions.get('window').height;
     const start = -4.5;
-    const gravityForce = 0.1;
     const [radiusMultiplier, setRadiusMultiplier] = useState(initialRadiusMultiplier);
     const [ballPosition, setBallPosition] = useState({ x: screenWidth / 2, y: screenHeight / 2 }); 
     const [isMoving, setIsMoving] = useState(false);
     const [pathPoints, setPathPoints] = useState([]);
     const [startTime, setStartTime] = useState(null);
+
+    useEffect(() => {
+        const initialRadius = radiusMultiplier * start - 90;
+        const initialX = screenWidth / 2 + initialRadius * Math.cos(start);
+        const initialY = screenHeight / 2 + initialRadius * Math.sin(start);
+        setBallPosition({ x: initialX, y: initialY });
+    }, [radiusMultiplier, screenWidth, screenHeight]);
 
     useEffect(() => {
         const generatePathPoints = () => {
@@ -65,8 +71,8 @@ const BallRoute = () => {
     };
 
     return (
-        <div style={{ width: screenWidth, height: screenHeight }}>
-            <Svg height={screenHeight} width={screenWidth} onClick={startMoving}>
+        <div style={{ width: '100%', height: '100%' }}>
+            <Svg height="100%" width="100%" onClick={startMoving}>
                 <Circle
                     cx={ballPosition.x}
                     cy={ballPosition.y}
@@ -84,6 +90,5 @@ const BallRoute = () => {
         </div>
     );
 };
-
 
 export default BallRoute;
