@@ -1,16 +1,15 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import BallRoute from './components/BallRoute';
-import PolarCoordinate from './components/PolarCoordinate';
+import BallRouteAndPolarCoordinate from './components/BallRouteAndPolarCoordinate.js';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.ballContainer}>
-        <BallRoute speed={100} />
+        <BallRouteAndPolarCoordinate isPolar={false} speed={100} />
       </View>
       <View style={styles.polarContainer}>
-        <PolarCoordinate speed={500} />
+        <BallRouteAndPolarCoordinate isPolar={true} speed={500} />
       </View>
     </View>
   );
