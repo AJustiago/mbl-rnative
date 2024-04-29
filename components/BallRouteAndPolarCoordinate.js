@@ -15,6 +15,7 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
     const [pathPoints, setPathPoints] = useState([]);
     const [startTime, setStartTime] = useState(null);
     const [colorIndex, setColorIndex] = useState(0);
+    const [linePos, setLinePos] = useState(90);
     const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
 
     useEffect(() => {
@@ -28,7 +29,7 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
         const generatePathPoints = () => {
             const newPoints = [];
             for (let theta = start; theta > -1000; theta -= 0.01) {
-                const radius = radiusMultiplier * theta - 90;
+                const radius = radiusMultiplier * theta - linePos;
                 const x = screenWidth / 2 + radius * Math.cos(theta);
                 const y = screenHeight / 2 + radius * Math.sin(theta);
                 newPoints.push({ x, y });
@@ -37,7 +38,7 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
         };
 
         generatePathPoints();
-    }, [screenWidth, screenHeight, radiusMultiplier]);
+    }, [screenWidth, screenHeight, radiusMultiplier, linePos]);
 
     useEffect(() => {
         const generatePoints = () => {
@@ -58,7 +59,6 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
 
     useEffect(() => {
         const colorIntervalId = setInterval(() => {
-            // Change color every 3 seconds
             setColorIndex((prevIndex) => (prevIndex + 1) % rainbowColors.length);
         }, 3000);
 
@@ -78,20 +78,24 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
                 const currentTime = performance.now();
                 const elapsedTime = currentTime - startTime;
                 const totalPathLength = getPathLength(pathPoints);
-                const distanceTraveled = (elapsedTime) * 8;
+                const distanceTraveled = elapsedTime * 8;
                 const currentPointIndex = Math.floor((distanceTraveled / totalPathLength) * pathPoints.length);
                 if (currentPointIndex < pathPoints.length) {
                     setBallPosition(pathPoints[currentPointIndex]);
+                    setLinePos(prevPos => {
+                        const newPos = prevPos - 20;
+                        return newPos < 10 ? 90 : newPos;
+                    });
                     requestAnimationFrame(moveBall);
                 } else {
                     setIsMoving(false);
                 }
             };
-
+    
             requestAnimationFrame(moveBall);
         }
-    }, [isMoving, pathPoints, startTime]);
-
+    }, [isMoving, pathPoints, startTime, linePos]);
+    
     const getPathLength = (points) => {
         let totalLength = 0;
         for (let i = 1; i < points.length; i++) {
@@ -122,7 +126,6 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
                             d={`M${pathPoints.map(point => `${point.x},${point.y}`).join('L')}`}
                             fill="none"
                             stroke=""
-                            strokeWidth={3}
                         />
                     </>
                 )}
