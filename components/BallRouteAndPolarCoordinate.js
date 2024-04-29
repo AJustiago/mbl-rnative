@@ -78,39 +78,15 @@ const BallRouteAndPolarCoordinate = ({ isPolar, speed }) => {
                 const currentTime = performance.now();
                 const elapsedTime = currentTime - startTime;
                 const totalPathLength = getPathLength(pathPoints);
-                const distanceTraveled = elapsedTime * 8;
+                const distanceTraveled = (elapsedTime) * 8;
                 const currentPointIndex = Math.floor((distanceTraveled / totalPathLength) * pathPoints.length);
-            
                 if (currentPointIndex < pathPoints.length) {
-
-                    const targetPosition = pathPoints[currentPointIndex];
-
-                    const dx = screenWidth / 2 - ballPosition.x;
-                    const dy = screenHeight / 2 - ballPosition.y;
-            
-                    const distanceToCenter = Math.sqrt(dx * dx + dy * dy);
-
-                    const gravity = 20; 
-                    const gravityX = (dx / distanceToCenter) * gravity;
-                    const gravityY = (dy / distanceToCenter) * gravity;
-
-                    const newPositionX = ballPosition.x + gravityX;
-                    const newPositionY = ballPosition.y + gravityY;
-
-                    const interpolatedPosition = {
-                        x: targetPosition.x + (newPositionX - targetPosition.x) * 0.1,
-                        y: targetPosition.y + (newPositionY - targetPosition.y) * 0.1,
-                    };
-            
-                    setBallPosition(interpolatedPosition);
-            
+                    setBallPosition(pathPoints[currentPointIndex]);
                     requestAnimationFrame(moveBall);
                 } else {
                     setIsMoving(false);
                 }
             };
-            
-            
 
             requestAnimationFrame(moveBall);
         }
