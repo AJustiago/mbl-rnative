@@ -12,5 +12,5 @@ Install the Expo Go app on your iOS or Android phone and connect to the same wir
 ## Running app
 
 ```bash
-npx expo run
+npx expo start
 ```
